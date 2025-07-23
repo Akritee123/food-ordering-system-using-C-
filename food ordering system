@@ -1,0 +1,102 @@
+#include <iostream>
+#include <iomanip>
+#include <map>
+#include <vector>
+using namespace std;
+
+struct MenuItem {
+    string name;
+    double price;
+};
+
+// Initialize food menu
+map<int, MenuItem> menu = {
+    {1, {"Burger", 120.0}},
+    {2, {"Pizza", 250.0}},
+    {3, {"Fries", 80.0}},
+    {4, {"Pasta", 150.0}},
+    {5, {"Coke", 50.0}}
+};
+
+// Store order as vector of pairs (item ID, quantity)
+vector<pair<int, int>> orderList;
+
+void showMenu() {
+    cout << "\n--- Food Menu ---\n";
+    cout << left << setw(5) << "ID" << setw(15) << "Item" << setw(10) << "Price" << endl;
+    for (auto &item : menu) {
+        cout << left << setw(5) << item.first
+             << setw(15) << item.second.name
+             << "Rs. " << item.second.price << endl;
+    }
+}
+
+void takeOrder() {
+    int itemID, quantity;
+    char choice;
+    do {
+        showMenu();
+        cout << "\nEnter the item ID to order: ";
+        cin >> itemID;
+        if (menu.find(itemID) == menu.end()) {
+            cout << "Invalid item ID. Try again.\n";
+            continue;
+        }
+        cout << "Enter quantity: ";
+        cin >> quantity;
+        orderList.push_back({itemID, quantity});
+        cout << "Do you want to order more? (y/n): ";
+        cin >> choice;
+    } while (choice == 'y' || choice == 'Y');
+}
+
+void showBill() {
+    if (orderList.empty()) {
+        cout << "No items ordered.\n";
+        return;
+    }
+
+    double total = 0;
+    cout << "\n--- Bill Summary ---\n";
+    cout << left << setw(15) << "Item" << setw(10) << "Qty"
+         << setw(15) << "Unit Price" << setw(10) << "Total" << endl;
+
+    for (auto &order : orderList) {
+        int id = order.first;
+        int qty = order.second;
+        double price = menu[id].price;
+        double itemTotal = qty * price;
+        total += itemTotal;
+
+        cout << left << setw(15) << menu[id].name
+             << setw(10) << qty
+             << "Rs. " << setw(10) << price
+             << "Rs. " << itemTotal << endl;
+    }
+
+    cout << "\nGrand Total: Rs. " << total << endl;
+}
+
+int main() {
+    int choice;
+    do {
+        cout << "\n=== Food Ordering System ===\n";
+        cout << "1. Show Menu\n";
+        cout << "2. Place Order\n";
+        cout << "3. Show Bill\n";
+        cout << "4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: showMenu(); break;
+            case 2: takeOrder(); break;
+            case 3: showBill(); break;
+            case 4: cout << "Thank you! Visit again.\n"; break;
+            default: cout << "Invalid choice. Try again.\n";
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
